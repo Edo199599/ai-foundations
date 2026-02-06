@@ -14,3 +14,9 @@ A: A rendere lo split riproducibile: stesso random_state -> stessa suddivisione 
 
 **Q5: Perché X e y vanno splittati insieme?**  
 A: Per mantenere l’allineamento tra input e label. Se li splitti separatamente rompi la corrispondenza e training/eval diventano privi di significato.
+
+**Q5: A cosa serve stratify nello split?**  
+A: Permette di manterenre la stessa suddivisione tra train e test nel momendo in cui ci sono più classi. Così che non ci sia una sproporzione di alcune da falsare il risultato poi finale del test.
+
+**Q6: Cos'è la LogisticRegression e a cosa serve max_iter?**  
+A: La logisticregression è un modello di classificazione che assegna al set di caratteristiche in analisi dei pesi e ne calcola poi una possibilità di classe, itera un numero di volte fino a max_iter aggiustando quei pesi di volta in volta fino ad ottenere un modello il più tendente possibile alla soluzione ottimale minimizzando la log-loss (penalizzi molto soluzioni sicure rivelatesi sbagliate, valorizzi se giuste). Con basse max_iter rischio che il modello smetta di iterare quando non ha ancora trovato una soluzione accettabile di bilanciamento.
