@@ -20,3 +20,15 @@ A: Permette di manterenre la stessa suddivisione tra train e test nel momendo in
 
 **Q6: Cos'è la LogisticRegression e a cosa serve max_iter?**  
 A: La logisticregression è un modello di classificazione che assegna al set di caratteristiche in analisi dei pesi e ne calcola poi una possibilità di classe, itera un numero di volte fino a max_iter aggiustando quei pesi di volta in volta fino ad ottenere un modello il più tendente possibile alla soluzione ottimale minimizzando la log-loss (penalizzi molto soluzioni sicure rivelatesi sbagliate, valorizzi se giuste). Con basse max_iter rischio che il modello smetta di iterare quando non ha ancora trovato una soluzione accettabile di bilanciamento.
+
+
+**Q7: Cos’è una confusion matrix?**
+A: Matrice nxn dve n è il numero di classi. Ogni riga rappresenta la classe vera y_true. Le colonne rappresentano le predizioni invece fatte y_pred, quindi per ogni classe quante volte è stata predetta al posto di una differente. La diagonale rappresenta le predizioni corrette.
+
+**Q8: “support” nel classification report cos’è?**
+A: il numero di esempi veri per quella classe nel test (somma della riga nella confusion matrix).
+
+**Q9: differenza precision vs recall in una frase?**
+A: 
+- precision = qualità delle predizioni di quella classe, quante volte quindi predire quella classe si è rivelato corretto; 
+- recall = quanti veri di quella classe riesci a catturare, quindi quante volte del totale indovinabile è stato indovinato.
