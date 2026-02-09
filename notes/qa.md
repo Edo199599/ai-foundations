@@ -32,3 +32,12 @@ A: il numero di esempi veri per quella classe nel test (somma della riga nella c
 A: 
 - precision = qualità delle predizioni di quella classe, quante volte quindi predire quella classe si è rivelato corretto; 
 - recall = quanti veri di quella classe riesci a catturare, quindi quante volte del totale indovinabile è stato indovinato.
+
+**Q10: Perché un singolo split non basta per valutare un modello?**
+A: Perché la metrica può variare a seconda dello split (split “fortunato/sfortunato”). Serve stimare media e varianza su più split/seed.
+
+**Q11: Cosa garantisce random_state?**
+A: Riproducibilità dello split (e quindi dell’esperimento), non migliori performance.
+
+**Q12: Perché usare stratify=y?**
+A: Mantiene proporzioni simili delle classi tra train/test, riducendo bias e varianza soprattutto con dataset piccoli o sbilanciati.
