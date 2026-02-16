@@ -41,3 +41,15 @@ A: Riproducibilità dello split (e quindi dell’esperimento), non migliori perf
 
 **Q12: Perché usare stratify=y?**
 A: Mantiene proporzioni simili delle classi tra train/test, riducendo bias e varianza soprattutto con dataset piccoli o sbilanciati.
+
+**Q13: Se abbasso la threshold, quale tra precision e recall tende a salire per la classe 1, e perché?** 
+se abbasso la soglia, il modello si sbilancia di più nell'assegnare dei positivi. Quindi aumento la recall perché perdo meno falsi negativi ma diminuisco la precisione perché aumento i falsi positivi. Quindi è più bravo a non farsi scappare record di quella classe ma rischia di prendere dentro anche elementi non di quella classe. 
+
+**Q14: In binario, la Logistic Regression “può non assegnare nessuna classe”?**
+In binario, la Logistic Regression “può non assegnare nessuna classe”? No. Mentre esamina la p della classe 1 se non supera al soglia la assegna alla classe 0 
+
+**Q15: Che differenza c’è tra threshold in binario e scelta della classe in multi-classe (Iris)?**
+Nel caso di più di 2 classi non c'è una soglia ma si tende ad assegnare alla classe con probabilità maggiore.
+
+**Q16: Come leggo velocemente una confusion matrix in binario?**
+Righe = true, colonne = pred. Diagonale = corretti. Con label [0,1] → [[TN, FP],[FN, TP]].
