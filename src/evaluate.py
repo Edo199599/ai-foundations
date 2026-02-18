@@ -78,9 +78,20 @@ def sweep_thresholds(
 
 
 def best_threshold_by_f1(results: List[ThresholdResult]) -> ThresholdResult:
-    """Pick threshold that maximizes F1 for positive class. Tie-break: higher recall, then lower threshold."""
+    """
+    Select the threshold that maximizes F1 for the positive class (label=1).
+
+    Tie-break policy (in order):
+      1) higher recall_pos (prefer fewer false negatives)
+      2) lower threshold (less conservative) via -threshold in the key
+
+    Rationale:
+      - If two thresholds yield the same F1, we bias towards catching positives (recall).
+      - If still tied, we prefer the smaller threshold which typically predicts positives more often.
+    """
     if not results:
         raise ValueError("Empty results list.")
+
     return max(results, key=lambda r: (r.f1_pos, r.recall_pos, -r.threshold))
 
 
