@@ -5,6 +5,7 @@ from typing import Iterable, Optional, List
 
 import numpy as np
 from sklearn.metrics import confusion_matrix, precision_recall_fscore_support
+import math
 
 
 @dataclass(frozen=True)
@@ -17,7 +18,11 @@ class ThresholdResult:
     precision_pos: float
     recall_pos: float
     f1_pos: float
+    support_pos: int
     accuracy: float
+    specificity: float = 0.0
+    balanced_accuracy: float = 0.0
+    mcc: float = 0.0
 
 
 def _binary_confusion_counts(y_true: np.ndarray, y_pred: np.ndarray) -> tuple[int, int, int, int]:
@@ -50,7 +55,7 @@ def sweep_thresholds(
 
         tp, fp, fn, tn = _binary_confusion_counts(y_true, y_pred)
 
-        prec, rec, f1, _ = precision_recall_fscore_support(
+        prec, rec, f1, sup = precision_recall_fscore_support(
             y_true,
             y_pred,
             labels=[1],          # metrica solo per la classe positiva
@@ -70,12 +75,72 @@ def sweep_thresholds(
                 precision_pos=float(prec[0]),
                 recall_pos=float(rec[0]),
                 f1_pos=float(f1[0]),
-                accuracy=accuracy,
+                support_pos=int(sup[0]),
+                accuracy=accuracy
             )
         )
 
     return results
 
+def evaluate_standard(y_true: np.ndarray, y_pred: np.ndarray) -> ThresholdResult:
+    """
+    Standard evaluation for hard predictions (0/1).
+    Returns a ThresholdResult with threshold set to NaN (not applicable here).
+    """
+    y_true = np.asarray(y_true).astype(int)
+    y_pred = np.asarray(y_pred).astype(int)
+
+    if len(y_true) != len(y_pred):
+        raise ValueError(f"y_true and y_pred must have same length: {len(y_true)} != {len(y_pred)}")
+
+    tp, fp, fn, tn = _binary_confusion_counts(y_true, y_pred)
+    prec, rec, f1, sup = precision_recall_fscore_support(
+        y_true,
+        y_pred,
+        labels=[1], # specifico di volere le metriche della classe 1 come positiva
+        average=None,
+        zero_division=0
+    )
+    precision_pos = float(prec[0])
+    recall_pos = float(rec[0])
+    f1_pos = float(f1[0])
+    support_pos = int(sup[0])
+
+    n = len(y_true)
+    accuracy = float((tp + tn)/ n) if n > 0 else 0.0
+
+    specificity = (tn / (tn + fp)) if tn + fp != 0 else 0.0 # recall classe 0
+    balanced_accuracy = (recall_pos + specificity) / 2.0 # media recall delle due classi
+
+    denom = (tp+fp)*(tp+fn)*(tn+fp)*(tn+fn)
+    mcc = (tp*tn - fp*fn) / math.sqrt(denom) if denom != 0 else 0.0
+
+    return ThresholdResult(
+        threshold=float("nan"),
+        tp = tp,
+        fp = fp,
+        fn = fn,
+        tn = tn,
+        precision_pos = precision_pos,
+        recall_pos = recall_pos,
+        f1_pos = f1_pos,
+        support_pos = support_pos,
+        accuracy = accuracy,
+        specificity = float(specificity),
+        balanced_accuracy = float(balanced_accuracy),
+        mcc = float(mcc)
+    )
+
+def print_standard_eval(res: ThresholdResult, *, title: str | None = None) -> None:
+    if title:
+        print("\n" + title)
+    print(f"TP={res.tp} FP={res.fp} FN={res.fn} TN={res.tn}")
+    print(
+        f"precision={res.precision_pos:.4f} | recall={res.recall_pos:.4f} | f1={res.f1_pos:.4f} | acc={res.accuracy:.4f} | sup={res.support_pos}"
+    )
+    print(
+        f"specificity(TNR)={res.specificity:.4f} | balanced_acc={res.balanced_accuracy:.4f} | MCC={res.mcc:.4f}"
+    )
 
 def best_threshold_by_f1(results: List[ThresholdResult]) -> ThresholdResult:
     """
