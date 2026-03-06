@@ -72,3 +72,5 @@ Seleziona l’elemento di results con F1 più alto (classe positiva). In caso di
 
 **Q22: Gotcha: perché python src/week2/day7_threshold.py può dare No module named 'src', mentre python -m src.week2.day7_threshold funziona?**
 Perché eseguire un file “nudo” dipende dalla working directory e dal PYTHONPATH: se non stai lanciando dalla root, Python potrebbe non vedere src come package importabile. Con python -m ... lo script viene eseguito come modulo del package, partendo dalla root del progetto, e quindi src risulta importabile.
+
+**Q22:**
