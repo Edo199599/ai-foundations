@@ -1,0 +1,67 @@
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
+from sklearn.pipeline import Pipeline
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, confusion_matrix
+
+# 1) Crea un mini dataset con:
+# - una colonna categorica: city
+# - una colonna numerica: age
+# - una target binaria: bought
+
+df = pd.DataFrame({
+    "city": ["Venezia", "Milano", "Roma", "Roma", "Milano", "Venezia", "Venezia", "Milano", "Roma", "Venezia", "Milano", "Roma"],
+    "age": [23, 67, 45, 20, 54, 47, 86, 21, 34, 52, 76, 18],
+    "bought": [0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 0]
+})
+
+# 2) Separa feature e target
+X = df[["city", "age"]]
+y = df["bought"]
+
+# 3) Definisci le liste di colonne
+categorical_cols = ["city"]
+numeric_cols = ["age"]
+
+# 4) Preprocessing
+
+preprocessor = ColumnTransformer(
+    transformers = [
+        ("cat", OneHotEncoder(handle_unknown="ignore"), categorical_cols),
+        ("num", StandardScaler(), numeric_cols)
+    ]
+)
+
+# 3) Split train/test
+X_train, X_test, y_train, y_test = train_test_split(
+    X,
+    y,
+    test_size=0.25,
+    random_state=42,
+    stratify=y
+)
+
+# FIT del preprocessor fuori dalla pipeline
+preprocessor.fit(X)
+
+# 4) Transformo 
+X_train_leaky = preprocessor.transform(X_train)
+X_test_leaky = preprocessor.transform(X_test)
+
+# modello allenato sui dati preprocessati
+leaky_model = LogisticRegression()
+
+# fit
+leaky_model.fit(X_train_leaky, y_train)
+
+# predict
+y_pred_leaky = leaky_model.predict(X_test_leaky)
+
+print(y_pred_leaky)
+print(accuracy_score(y_test, y_pred_leaky))
+print(confusion_matrix(y_test, y_pred_leaky))
+
+# Ottengo lo stesso risultato perché il dataset è prevedibile e piccolo. 
+# Il processo è comunque leaky
