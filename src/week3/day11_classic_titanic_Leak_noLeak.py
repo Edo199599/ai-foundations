@@ -52,8 +52,11 @@ y_pred_leak = model.predict(X_test_leak)
 
 print(accuracy_score(y_test, y_pred_leak))
 
-# Anche in questo caso la distribuzione di X-train e X_test sono molto simili e il modello è ugualmente
-# bravo anche in caso di leak a trovare la soluzione 
+# compariamo anche le confusion matrix
 
 print(confusion_matrix(y_test, y_pred))
 print(confusion_matrix(y_test, y_pred_leak))
+
+# Anche in questo caso evidentemente la distribuzione di X_train e X_test sono molto simili 
+# il modello predice allo stesso modo
+
