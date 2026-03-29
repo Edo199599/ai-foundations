@@ -5,7 +5,8 @@ from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.pipeline import Pipeline
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+from sklearn.metrics import accuracy_score
+from sklearn.dummy import DummyClassifier
 
 titanic = fetch_openml(name="titanic", version=1, as_frame=True)
 
@@ -87,5 +88,42 @@ print(f"Std CV recall: {recall_scores.std():.3f}")
 
 #Con la cross-validation su pipeline abbiamo ottenuto una stima più robusta della performance rispetto 
 # a uno split singolo. Il test esterno sembrava favorevole, mentre la CV ha mostrato una performance media più prudente. 
-# Inoltre, guardando più metriche, abbiamo visto che il modello ha una precision discreta ma una recall più debole, 
+# Inoltre, guardando più metriche, abbiamo visto che il modello ha una precision discreta ma una recall più debole
 # quindi l’accuracy da sola sarebbe stata troppo ottimistica.
+
+
+print("-------------------------------------------------\n")
+
+# ultima analisi utile il dummy clussifier. vogliamo vedere se l'accuracy del nostro modello ha valore oppure se batte di poco un modello dummy
+
+
+baseline = DummyClassifier(strategy="most_frequent")
+
+baseline_scores = cross_val_score(
+    baseline,
+    X_train,
+    y_train,
+    cv=cv,
+    scoring="accuracy"
+)
+
+print("Baseline CV accuracy:", baseline_scores.round(3))
+print(f"Baseline mean CV accuracy: {baseline_scores.mean():.3f}")
+print(f"Baseline std CV accuracy: {baseline_scores.std():.3f}\n")
+
+# l'accuracy del modello dummy con strategia most frequent è 0.592, sensibilmente più bassa della 0.77 del nostro modello
+# Questo indica che il modello non si limita a sfruttare la classe maggioritaria, ma sta estraendo informazione utile dalle feature.
+
+
+baseline = DummyClassifier(strategy="most_frequent")
+
+baseline.fit(X_train, y_train)
+y_pred_dummy = baseline.predict(X_test)
+acc_dummy = accuracy_score(y_test, y_pred_dummy)
+
+print("Accuracy Pipeline:", acc_test) 
+print("Accuracy Dummy:", acc_dummy) 
+
+# Sul test esterno, la pipeline ottiene accuracy 0.833 contro 0.590 del DummyClassifier.
+# Questo suggerisce che il modello non si limita a predire sempre la classe più frequente,
+# ma apprende una relazione utile tra le feature X e la target y.
