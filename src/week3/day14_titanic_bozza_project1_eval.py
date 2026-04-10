@@ -38,7 +38,7 @@ def compare_models(pipeline_metrics, dummy_metrics):
         print(f"{metric.capitalize()}: {pipeline_metrics[metric]:.3f} vs {dummy_metrics[metric]:.3f}")
     print()
 
-    if pipeline_metrics["accuracy"] > dummy_metrics ["accuracy"] and pipeline_metrics["f1"] > dummy_metrics["f1"]:
+    if pipeline_metrics["accuracy"] > dummy_metrics["accuracy"] and pipeline_metrics["f1"] > dummy_metrics["f1"]:
         print("Accuracy e f1 della Pipeline superano le stesse della dummy baseline")
     else:
         print("Accuracy e f1 della Pipeline non superano le stesse della dummy baseline")
@@ -71,10 +71,10 @@ def evaluate_with_cross_validation(X_train, y_train):
 def print_cv_summary(cv_metrics):
     print("Cross-validation summary:")
     print("-" * 30)
-    print(f"Accuracy : {cv_metrics["accuracy_mean"]:.3f} +/- {cv_metrics["accuracy_std"]:.3f}")
-    print(f"Precision: {cv_metrics["precision_mean"]:.3f} +/- {cv_metrics["precision_std"]:.3f}")
-    print(f"Recall   : {cv_metrics["recall_mean"]:.3f} +/- {cv_metrics["recall_std"]:.3f}")
-    print(f"F1       : {cv_metrics["f1_mean"]:.3f} +/- {cv_metrics["f1_std"]:.3f}")
+    print(f"Accuracy : {cv_metrics['accuracy_mean']:.3f} +/- {cv_metrics['accuracy_std']:.3f}")
+    print(f"Precision: {cv_metrics['precision_mean']:.3f} +/- {cv_metrics['precision_std']:.3f}")
+    print(f"Recall   : {cv_metrics['recall_mean']:.3f} +/- {cv_metrics['recall_std']:.3f}")
+    print(f"F1       : {cv_metrics['f1_mean']:.3f} +/- {cv_metrics['f1_std']:.3f}")
 
 
 def evaluate_pipeline(pipe, X_test, y_test):
